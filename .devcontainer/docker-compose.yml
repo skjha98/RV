@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  # The "Main" workspace where you will write code
+  app:
+    image: mcr.microsoft.com/devcontainers/typescript-node:20
+    volumes:
+      - ..:/workspaces:cached
+    network_mode: service:db # Shares network with DB for easy access
+    command: sleep infinity
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: my_db
+    ports:
+      - "5432:5432"
