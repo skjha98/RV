@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model festival_d {
+  id   Int       @id @default(autoincrement())
+  name String?
+  date DateTime? @db.Date
+}
+
+model flat_d {
+  id          Int              @id @default(autoincrement())
+  flat_number String
+  owner_name  String
+  type        flat_type
+  owner_type  flat_owner_type?
+  mobile      String?          @db.Char(10)
+  email       String?
+}
+
+model vendor_d {
+  id     Int     @id @default(autoincrement())
+  name   String?
+  mobile String? @db.Char(10)
+}
+
+enum flat_owner_type {
+  OWNER
+  TENANT
+}
+
+enum flat_type {
+  FLAT
+  DUPLEX
+}
