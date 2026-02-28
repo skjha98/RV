@@ -6,16 +6,16 @@ datasource db {
   provider = "postgresql"
 }
 
-model festival_d {
-  id   Int       @id @default(autoincrement())
-  name String?
-  date DateTime? @db.Date
+model occasion_d {
+  id   Int      @id @default(autoincrement())
+  name String
+  date DateTime @db.Date
 }
 
 model flat_d {
   id          Int              @id @default(autoincrement())
   flat_number String
-  owner_name  String
+  owner_name  String?
   type        flat_type
   owner_type  flat_owner_type?
   mobile      String?          @db.Char(10)
@@ -24,7 +24,7 @@ model flat_d {
 
 model vendor_d {
   id     Int     @id @default(autoincrement())
-  name   String?
+  name   String
   mobile String? @db.Char(10)
 }
 
@@ -34,6 +34,6 @@ enum flat_owner_type {
 }
 
 enum flat_type {
-  FLAT
+  MIG
   DUPLEX
 }

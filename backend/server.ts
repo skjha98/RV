@@ -30,6 +30,22 @@ const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextF
   Promise.resolve(fn(req, res, next)).catch(next);
 };
 
+
+/** Data Cleaning */
+const cleanData = (data: Record<string, any>) => {
+  Object.keys(data).forEach(key => {
+    const value = data[key];
+    if (typeof value === 'string') {
+      const trimmed  = value.trim();
+      if (trimmed === "") {
+        data[key] = null;
+      }
+      else if (key === 'owner_type' || key === 'type') {
+        data[key] = trimmed.toUpperCase();
+      }
+    }
+  });
+};
 /** GET Request */
 app.get('/', asyncHandler(async (req: Request, res: Response) => {
   try {
@@ -70,11 +86,12 @@ app.get('/vendors', asyncHandler(async (req: Request, res: Response) => {
   res.json(vendors);
 }));
 
-app.get('/festivals', asyncHandler(async (req: Request, res: Response) => {
-  const festivals = await prisma.festival_d.findMany({
+app.get('/occasions', asyncHandler(async (req: Request, res: Response) => {
+  console.log("GET /occasions");
+  const occasions = await prisma.occasion_d.findMany({
     orderBy: {id: "asc"}
   });
-  res.json(festivals);
+  res.json(occasions);
 }));
 
 /** POST Requests */
@@ -96,13 +113,86 @@ app.post('/vendors', asyncHandler(async (req: Request, res: Response) => {
   res.status(201).json(newVendor);
 }));
 
-app.post('/festivals', asyncHandler(async (req: Request, res: Response) => {
-  console.log("POST /festivals");
+app.post('/occasions', asyncHandler(async (req: Request, res: Response) => {
+  console.log("POST /occasions");
   const { name, date } = req.body;
-  const newFestival = await prisma.festival_d.create({
-    data: { name, date }
+  const newOccasion = await prisma.occasion_d.create({
+    data: { name, date: new Date(date) }
   });
-  res.status(201).json(newFestival);
+  res.status(201).json(newOccasion);
+}));
+
+/** Bulk POST Requests */
+app.post('/flats/bulk', asyncHandler(async (req: Request, res: Response) => {
+  console.log("POST /flats/bulk");
+  const data = req.body;
+  data.forEach((row: any) => {
+    cleanData(row);
+  });
+  const newFlats = await prisma.flat_d.createMany({
+    data: data,
+    skipDuplicates: true
+  });
+  res.status(201).json(newFlats);
+}));
+
+app.post('/vendors/bulk', asyncHandler(async (req: Request, res: Response) => {
+  console.log("POST /vendors/bulk");
+  const data = req.body;
+  data.forEach((row: any) => {
+    cleanData(row);
+  })
+  const newVendors = await prisma.vendor_d.createMany({
+    data: data,
+    skipDuplicates: true
+  });
+  res.status(201).json(newVendors);
+}));
+
+app.post('/occasions/bulk', asyncHandler(async (req: Request, res: Response) => {
+  console.log("POST /occasions/bulk");
+  const data = req.body.map((item: any) => {
+    const [month, date, year] = item.date.split('/').map(Number);
+    const dateObj = new Date(year, month-1, date);
+    return {...item, date: dateObj};
+  });
+  
+  const newOccasions = await prisma.occasion_d.createMany({
+    data: data,
+    skipDuplicates: true
+  });
+  res.status(201).json(newOccasions);
+}));
+
+/** PUT (Update) Requests */
+app.put('/flats/:id', asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { flat_number, owner_name, type, owner_type, mobile, email } = req.body;
+  const updatedFlat = await prisma.flat_d.update({
+    where: { id: Number(id) },
+    data: { flat_number, owner_name, type, owner_type, mobile, email }
+  });
+  res.json(updatedFlat);
+}));
+
+app.put('/vendors/:id', asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name, mobile } = req.body;
+  const updatedVendor = await prisma.vendor_d.update({
+    where: { id: Number(id) },
+    data: { name, mobile }
+  });
+  res.json(updatedVendor);
+}));
+
+app.put('/occasions/:id', asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name, date } = req.body;
+  const updatedOccasion = await prisma.occasion_d.update({
+    where: { id: Number(id) },
+    data: { name, date: date }
+  });
+  res.json(updatedOccasion);
 }));
 
 /** DELETE Requests */
@@ -124,13 +214,13 @@ app.delete('/vendors/:id', asyncHandler(async (req: Request, res: Response) => {
   res.json({ message: "Vendor deleted successfully" });
 }));
 
-app.delete('/festivals/:id', asyncHandler(async (req: Request, res: Response) => {
+app.delete('/occasions/:id', asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  console.log(`DELETE /festivals/${id}`)
-  await prisma.festival_d.delete({
+  console.log(`DELETE /occasions/${id}`)
+  await prisma.occasion_d.delete({
     where: {id: Number(id)}
   });
-  res.json({ message: "Festival deleted successfully" });
+  res.json({ message: "Occasion deleted successfully" });
 }));
 
 // --- GLOBAL ERROR HANDLER ---
