@@ -1,28 +1,28 @@
 'use client';
 import React from 'react';
 // 1. IMPORT the type from your hook file
-import { TableRow } from './useTableData'; 
+import { TableRow } from './useTableData';
 
 interface RawEntryFormProps {
     activeTable: string;
     editId: number | null;
     // 2. Use the imported type
-    formData: Partial<TableRow>; 
+    formData: Partial<TableRow>;
     // 3. FIX "Unexpected any": Define exactly what the function expects
-    setFormData: (data: Partial<TableRow>) => void; 
+    setFormData: (data: Partial<TableRow>) => void;
     onSubmit: (e: React.FormEvent) => void;
     onCancel: () => void;
 }
 
-export default function RawEntryForm({ 
-    activeTable, 
-    editId, 
-    formData, 
-    setFormData, 
-    onSubmit, 
-    onCancel 
+export default function RawEntryForm({
+    activeTable,
+    editId,
+    formData,
+    setFormData,
+    onSubmit,
+    onCancel
 }: RawEntryFormProps) {
-    
+
     // 4. FIX handleChange types
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -55,8 +55,20 @@ export default function RawEntryForm({
 
                 {activeTable === 'occasions' && (
                     <>
-                        <input name="name" placeholder="Occasion" value={(formData.name as string) ?? ''} onChange={handleChange} required />
-                        <input name="date" type="date" value={(formData.date as string) ?? ''} onChange={handleChange} required />
+                        <input
+                            name="name"
+                            placeholder="Occasion"
+                            value={(formData.name as string) ?? ''}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            name="date"
+                            type="date"
+                            value={formData.date ? String(formData.date).split('T')[0] : ''}
+                            onChange={handleChange}
+                            required
+                        />
                     </>
                 )}
 
