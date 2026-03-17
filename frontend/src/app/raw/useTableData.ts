@@ -13,9 +13,27 @@ export function useTableData(activeTable: string) {
     // 1. Move resets inside the async callback to avoid "synchronous" cascading updates
     const fetchData = useCallback(async () => {
         try {
-            const response = await fetch(`/api/${activeTable}`);
+            // 1. Create a mapping for custom routes
+            let endpoint = `/api/${activeTable}`;
+
+            if (activeTable === 'revenue_stage') {
+                endpoint = '/api/revenue/stage';
+            } else if (activeTable === 'revenue') {
+                endpoint = '/api/revenue';
+            }
+
+            const response = await fetch(endpoint);
+
+            // 2. Check if the response is actually JSON before parsing
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                const text = await response.text();
+                console.error("Expected JSON but received:", text);
+                setData([]);
+                return;
+            }
             const json = await response.json();
-            
+
             // Batch these updates together
             setData(Array.isArray(json) ? json : []);
             setSearchTerm('');
@@ -29,7 +47,7 @@ export function useTableData(activeTable: string) {
     // 2. Now the effect body only triggers the async flow
     useEffect(() => {
         let isMounted = true;
-        
+
         const load = async () => {
             if (isMounted) {
                 await fetchData();
@@ -44,8 +62,8 @@ export function useTableData(activeTable: string) {
     const processedData = useMemo(() => {
         let result = [...data];
         if (searchTerm) {
-            result = result.filter(item => 
-                Object.values(item).some(val => 
+            result = result.filter(item =>
+                Object.values(item).some(val =>
                     String(val ?? '').toLowerCase().includes(searchTerm.toLowerCase())
                 )
             );
@@ -62,12 +80,12 @@ export function useTableData(activeTable: string) {
         return result;
     }, [data, searchTerm, sortConfig]);
 
-    return { 
-        processedData, 
-        searchTerm, 
-        setSearchTerm, 
-        sortConfig, 
-        setSortConfig, 
-        fetchData 
+    return {
+        processedData,
+        searchTerm,
+        setSearchTerm,
+        sortConfig,
+        setSortConfig,
+        fetchData
     };
 }
