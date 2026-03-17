@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import occasionRoutes from './routes/occasionRoutes.js';
 import vendorRoutes from './routes/vendorRoutes.js';
 import flatRoutes from './routes/flatRoutes.js';
+import revenueRoutes from './routes/revenueRoutes.js';
 
 
 const { Pool } = pkg;
@@ -51,6 +52,7 @@ app.post('/', async (req: Request, res: Response) => {
 app.use('/flats', flatRoutes);
 app.use('/vendors', vendorRoutes);
 app.use('/occasions', occasionRoutes);
+app.use('/revenue', revenueRoutes);
 
 
 // --- GLOBAL ERROR HANDLER ---

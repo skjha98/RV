@@ -6,29 +6,77 @@ datasource db {
   provider = "postgresql"
 }
 
+model revenue_t {
+  id              Int            @id @default(autoincrement())
+  bill_no         String?
+  tracking_id     tracking_type
+  payment_mode    payment_type
+  payment_status  payment_status
+  payment_date    DateTime       @db.Date
+  received_amount Decimal        @db.Decimal(10, 2)
+  pending_amount  Decimal        @db.Decimal(10, 2)
+  created_at      DateTime       @default(now())
+  description     String?
+
+  flat_id         Int?
+  vendor_id       Int?
+  occasion_id     Int?
+
+  flat            flat_d?        @relation(fields: [flat_id], references: [id])
+  vendor          vendor_d?      @relation(fields: [vendor_id], references: [id])
+  occasion        occasion_d?    @relation(fields: [occasion_id], references: [id])
+}
+
+model revenue_stage_t {
+  id              Int            @id @default(autoincrement()) // Added ID
+  bill_no         String?
+  received_amount Decimal        @db.Decimal(10, 2)
+  pending_amount  Decimal        @db.Decimal(10, 2)
+  description     String?
+  created_at      DateTime       @default(now())
+  payment_mode    payment_type?
+  payment_date    DateTime       @db.Date
+  payment_status  payment_status?
+  tracking_id     tracking_type?
+
+  flat_id         Int?
+  vendor_id       Int?
+  occasion_id     Int?
+
+  flat            flat_d?        @relation(fields: [flat_id], references: [id])
+  vendor          vendor_d?      @relation(fields: [vendor_id], references: [id])
+  occasion        occasion_d?    @relation(fields: [occasion_id], references: [id])
+}
+
 model occasion_d {
-  id   Int      @id @default(autoincrement())
-  name String
-  date DateTime @db.Date
+  id           Int               @id @default(autoincrement())
+  name         String
+  date         DateTime          @db.Date
+  revenues     revenue_t[]
+  staged_revenues revenue_stage_t[]
 }
 
 model flat_d {
-  id          Int              @id @default(autoincrement())
-  flat_number String
-  owner_name  String?
-  type        flat_type
-  owner_type  flat_owner_type?
-  mobile      String?          @db.Char(10)
-  email       String?
+  id           Int                 @id @default(autoincrement())
+  flat_number  String
+  owner_name   String?
+  type         flat_type
+  occupancy    flat_occupancy_type? // Updated name
+  mobile       String?             @db.Char(10)
+  email        String?
+  revenues     revenue_t[]
+  staged_revenues revenue_stage_t[]
 }
 
 model vendor_d {
-  id     Int     @id @default(autoincrement())
-  name   String
-  mobile String? @db.Char(10)
+  id           Int               @id @default(autoincrement())
+  name         String
+  mobile       String?           @db.Char(10)
+  revenues     revenue_t[]
+  staged_revenues revenue_stage_t[]
 }
 
-enum flat_owner_type {
+enum flat_occupancy_type {
   OWNER
   TENANT
 }
@@ -36,4 +84,23 @@ enum flat_owner_type {
 enum flat_type {
   MIG
   DUPLEX
+}
+
+enum payment_type {
+  UPI
+  CASH
+  NET_BANKING
+}
+
+enum tracking_type {
+  TEMPLE
+  CHATT
+  RWA
+}
+
+enum payment_status {
+  PAID
+  RECEIVED
+  PENDING
+  PARTIAL
 }

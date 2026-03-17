@@ -1,4 +1,4 @@
-flat_number,owner_name,type,owner_type,mobile,email
+flat_number,owner_name,type,occupancy,mobile,email
 A1,,DUPLEX,,,
 A10,B. P. Khanduri,DUPLEX,Owner,,
 A100,,DUPLEX,,,

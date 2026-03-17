@@ -6,7 +6,7 @@ export const cleanData = (data: Record<string, any>) => {
       if (trimmed === "") {
         data[key] = null;
       }
-      else if (key === 'owner_type' || key === 'type') {
+      else if (key === 'occupancy' || key === 'type') {
         data[key] = trimmed.toUpperCase();
       }
     }

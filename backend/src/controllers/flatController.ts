@@ -4,9 +4,9 @@ import { cleanData } from '../utils/cleanData.js';
 
 
 export const createFlat = async (req: Request, res: Response) => {
-    const { flat_number, owner_name, type, owner_type, mobile, email } = req.body;
+    const { flat_number, owner_name, type, occupancy, mobile, email } = req.body;
     const newFlat = await prisma.flat_d.create({
-        data: { flat_number, owner_name, type, owner_type, mobile, email }
+        data: { flat_number, owner_name, type, occupancy, mobile, email }
     });
     res.status(201).json(newFlat);
 };
@@ -18,10 +18,10 @@ export const getFlats = async (req: Request, res: Response) => {
 
 export const updateFlat = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { flat_number, owner_name, type, owner_type, mobile, email } = req.body;
+    const { flat_number, owner_name, type, occupancy, mobile, email } = req.body;
     const updatedFlat = await prisma.flat_d.update({
         where: { id: Number(id) },
-        data: { flat_number, owner_name, type, owner_type, mobile, email }
+        data: { flat_number, owner_name, type, occupancy, mobile, email }
     });
     res.json(updatedFlat);
 }

@@ -94,7 +94,7 @@ export default function RawPage() {
         const config: Record<string, TableMeta> = {
             flats: { 
                 headers: ['ID', 'Flat #', 'Owner', 'Type', 'Occupancy', 'Mobile'], 
-                keys: ['id', 'flat_number', 'owner_name', 'type', 'owner_type', 'mobile'] 
+                keys: ['id', 'flat_number', 'owner_name', 'type', 'occupancy', 'mobile'] 
             },
             vendors: { 
                 headers: ['ID', 'Name', 'Mobile'], 

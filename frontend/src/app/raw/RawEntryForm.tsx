@@ -39,7 +39,7 @@ export default function RawEntryForm({
                         <select name="type" value={(formData.type as string) ?? 'FLAT'} onChange={handleChange}>
                             <option value="FLAT">FLAT</option><option value="DUPLEX">DUPLEX</option><option value="MIG">MIG</option>
                         </select>
-                        <select name="owner_type" value={(formData.owner_type as string) ?? 'OWNER'} onChange={handleChange}>
+                        <select name="occupancy" value={(formData.occupancy as string) ?? 'OWNER'} onChange={handleChange}>
                             <option value="OWNER">OWNER</option><option value="TENANT">TENANT</option>
                         </select>
                         <input name="mobile" placeholder="Mobile" value={(formData.mobile as string) ?? ''} onChange={handleChange} />
