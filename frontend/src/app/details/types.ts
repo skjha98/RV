@@ -41,3 +41,13 @@ export interface EventRecord {
     name: string;
     date: string;
 }
+
+export interface BaseTableProps {
+    data: RevenueRecord[];
+    accentColor: string;
+    isAdding?: boolean;
+    newRow?: Partial<RevenueRecord>;
+    onNewRowChange?: (field: keyof RevenueRecord, value: string | number | null) => void;
+    onSave?: () => void;
+    onCancel?: () => void;
+}
