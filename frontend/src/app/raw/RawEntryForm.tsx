@@ -53,11 +53,11 @@ export default function RawEntryForm({
                     </>
                 )}
 
-                {activeTable === 'occasions' && (
+                {activeTable === 'events' && (
                     <>
                         <input
                             name="name"
-                            placeholder="Occasion"
+                            placeholder="Event"
                             value={(formData.name as string) ?? ''}
                             onChange={handleChange}
                             required

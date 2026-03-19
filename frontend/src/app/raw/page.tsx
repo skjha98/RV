@@ -106,7 +106,7 @@ export default function RawPage() {
                 headers: ['ID', 'Name', 'Mobile'], 
                 keys: ['id', 'name', 'mobile'] 
             },
-            occasions: { 
+            events: { 
                 headers: ['ID', 'Event', 'Date'], 
                 keys: ['id', 'name', 'date'] 
             },
@@ -130,7 +130,7 @@ export default function RawPage() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '20px 0' }}>
                 <div>
-                    {['flats', 'vendors', 'occasions', 'revenue_stage', 'revenue'].map(t => (
+                    {['flats', 'vendors', 'events', 'revenue_stage', 'revenue'].map(t => (
                         <button key={t} onClick={() => { setActiveTable(t); setEditId(null); }} style={{ 
                             marginRight: '15px', background: 'none', border: 'none', cursor: 'pointer', 
                             color: activeTable === t ? 'red' : 'black', 
@@ -208,8 +208,8 @@ export default function RawPage() {
                 </thead>
                 <tbody>
                     {processedData.map((item: any) => {
-                        // Logic to show related name (Flat #, Vendor Name, or Occasion Name)
-                        const entityName = item.flat?.flat_number || item.vendor?.name || item.occasion?.name || 'N/A';
+                        // Logic to show related name (Flat #, Vendor Name, or Event Name)
+                        const entityName = item.flat?.flat_number || item.vendor?.name || item.event?.name || 'N/A';
                         
                         return (
                             <tr key={item.id}>

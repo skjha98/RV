@@ -3,16 +3,8 @@ import { prisma } from '../lib/prisma.js';
 import { promoteStagedRevenue } from '../utils/revenueUtils.js';
 
 export const getStagedRevenue = async (req: Request, res: Response) => {
-  const data = await prisma.revenue_stage_t.findMany({
-    include: { flat: true, vendor: true, occasion: true },
-    orderBy: { payment_date: 'desc' }
-  });
+  const data = await prisma.revenue_stage_t.findMany();
   res.json(data);
-};
-
-export const stageRevenue = async (req: Request, res: Response) => {
-  const newEntry = await prisma.revenue_stage_t.create({ data: req.body });
-  res.status(201).json(newEntry);
 };
 
 export const confirmPromotion = async (req: Request, res: Response) => {
@@ -21,10 +13,13 @@ export const confirmPromotion = async (req: Request, res: Response) => {
 };
 
 export const getRevenue = async (req: Request, res: Response) => {
+  const data = await prisma.revenue_t.findMany();
+  res.json(data);
+}
+
+export const getRevenueAll = async (req: Request, res: Response) => {
   const data = await prisma.revenue_t.findMany({
-    include: { flat: true, vendor: true, occasion: true },
-    orderBy: { id: 'asc' }
+    include:{flat:true, vendor:true, event:true}
   });
   res.json(data);
-
 }

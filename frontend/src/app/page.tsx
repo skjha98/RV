@@ -91,7 +91,7 @@ export default function Home() {
         </header>
 
         <nav className="flex space-x-1 bg-slate-200/50 p-1.5 rounded-2xl mb-8 w-full md:w-fit">
-          {['flats', 'vendors', 'occasions'].map((tab) => (
+          {['flats', 'vendors', 'events'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTable(tab)}
@@ -142,9 +142,9 @@ export default function Home() {
                 </>
               )}
 
-              {activeTable === 'occasions' && (
+              {activeTable === 'events' && (
                 <>
-                  <div className="col-span-1"><label className={labelClass}>Occasion Name</label><input className={inputClass} placeholder="Occasion" value={formData.name ?? ''} onChange={e => setFormData({ ...formData, name: e.target.value })} required /></div>
+                  <div className="col-span-1"><label className={labelClass}>Event Name</label><input className={inputClass} placeholder="Event" value={formData.name ?? ''} onChange={e => setFormData({ ...formData, name: e.target.value })} required /></div>
                   <div className="col-span-1"><label className={labelClass}>Event Date</label><input type="date" className={inputClass} value={formData.date ?? ''} onChange={e => setFormData({ ...formData, date: e.target.value })} required /></div>
                 </>
               )}
@@ -196,7 +196,7 @@ export default function Home() {
                         <p className="text-slate-400 text-sm font-medium">📞 {item.mobile}</p>
                       </div>
                     )}
-                    {activeTable === 'occasions' && (
+                    {activeTable === 'events' && (
                       <div>
                         <p className="font-bold text-slate-800 text-lg">{item.name}</p>
                         <p className="text-indigo-500 text-sm font-bold flex items-center gap-1">

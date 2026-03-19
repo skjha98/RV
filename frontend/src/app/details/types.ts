@@ -2,8 +2,9 @@
 export interface RevenueRecord {
     id: number;
     bill_no: string | null;
-    received_amount: number | null;
-    pending_amount: number | null;
+    amount_received: number | null;
+    amount_paid: number | null;
+    amount_pending: number | null;
     description: string | null;
     payment_mode: string | null;
     payment_date: string | null;
@@ -11,12 +12,12 @@ export interface RevenueRecord {
     tracking_id: string | null;
     flat_id: number | null;
     vendor_id: number | null;
-    occasion_id: number | null;
+    event_id: number | null;
     
     /** Optional Fiels */
     flat?: FlatRecord;
     vendor?: VendorRecord;
-    occasion?: OccasionRecord;
+    event?: EventRecord;
 }
 
 export interface FlatRecord {
@@ -35,7 +36,7 @@ export interface VendorRecord {
     mobile: number | null;
 }
 
-export interface OccasionRecord {
+export interface EventRecord {
     id: number;
     name: string;
     date: string;
