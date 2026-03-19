@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from "react";
-import { RotateCw, Plus, X } from "lucide-react";
+import { RotateCw, Plus } from "lucide-react";
 import BaseTable from "./BaseTable";
 import { RevenueRecord } from "./types";
 
@@ -10,9 +10,9 @@ const INITIAL_ROW: Partial<RevenueRecord> = {
     amount_paid: 0,
     amount_pending: 0,
     description: '',
-    payment_mode: 'CASH',
+    payment_mode: '',
     payment_date: new Date().toISOString().split('T')[0],
-    payment_status: 'PENDING',
+    payment_status: '',
     tracking_id: '',
     flat_id: undefined,
     vendor_id: undefined,
@@ -24,6 +24,8 @@ export default function StagingTable() {
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
     const [newRow, setNewRow] = useState<Partial<RevenueRecord>>(INITIAL_ROW);
+    const [editingId, setEditingId] = useState<number | null>(null);
+    const [editRow, setEditRow] = useState<Partial<RevenueRecord> | null>(null);
 
     const refresh = async () => {
         setLoading(true);
@@ -50,6 +52,8 @@ export default function StagingTable() {
                 setIsAdding(false);
                 setNewRow(INITIAL_ROW);
                 refresh();
+            } else {
+                alert("Failed to save revord.");
             }
         } catch (error) {
             console.error("Failed to save row:", error);
@@ -57,9 +61,63 @@ export default function StagingTable() {
     };
 
     const handleCancel = () => {
-        setIsAdding(true); // You could also set this to false to close the row
+        setIsAdding(true);
         setIsAdding(false);
         setNewRow(INITIAL_ROW);
+    };
+
+    const handleEditStart = (row: RevenueRecord) => {
+        setEditingId(row.id);
+        setEditRow(row);
+    };
+
+    const handleEditChange = (field: keyof RevenueRecord, value: string | number | null) => {
+        setEditRow(prev => (prev ? { ...prev, [field]: value } : null));
+    };
+
+    const handleUpdateSave = async () => {
+        if (!editingId || !editRow) return;
+
+        try {
+            const res = await fetch(`/api/revenue/stage?id=${editingId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(editRow),
+            });
+
+            if (res.ok) {
+                setEditingId(null);
+                setEditRow(null);
+                refresh(); // Reload table to show updated data
+            } else {
+                alert("Failed to update record.");
+            }
+        } catch (err) {
+            console.error("Update error:", err);
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        if (!window.confirm("Are you sure you want to delete this staging record?")) return;
+
+        try {
+            const res = await fetch(`/api/revenue/stage?id=${id}`, {
+                method: 'DELETE',
+            });
+
+            if (res.ok) {
+                refresh(); // Reload the table
+            } else {
+                alert("Failed to delete record.");
+            }
+        } catch (err) {
+            console.error("Delete error:", err);
+        }
+    };
+
+    const handleUpdateCancel = () => {
+        setEditingId(null);
+        setEditRow(null);
     };
 
     const handleFieldChange = (field: keyof RevenueRecord, value: string | number | null) => {
@@ -75,17 +133,23 @@ export default function StagingTable() {
                     <h2 style={{ color: "#d4a017", margin: 0 }}>STAGING</h2>
                     {!isAdding ? (
                         <button onClick={() => setIsAdding(true)} style={addBtnStyle}>
-                           <Plus size={16} /> ADD
+                            <Plus size={16} /> ADD
                         </button>
                     ) : (
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                            <button onClick={handleSave} style={{...addBtnStyle, backgroundColor: '#2d5a27'}}>CONFIRM SAVE</button>
-                            <button onClick={handleCancel} style={{...addBtnStyle, backgroundColor: '#666'}}>CANCEL</button>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <button onClick={handleSave} disabled={loading} style={{ ...addBtnStyle, backgroundColor: '#2d5a27', boxShadow: '0 0 10px rgba(45,90,39,0.3)' }}>
+                                {loading ? 'SAVING...' : 'CONFIRM SAVE'}
+                            </button>
+                            <button onClick={handleCancel} style={{ ...addBtnStyle, backgroundColor: '#666' }}>
+                                CANCEL
+                            </button>
+                            <span style={{ fontSize: '0.8rem', color: '#666', fontStyle: 'italic' }}>
+                                (Filling out new record below)
+                            </span>
                         </div>
                     )}
                 </div>
 
-                {/* Restored Refresh Icon Button */}
                 <button
                     onClick={refresh}
                     disabled={loading}
@@ -102,20 +166,25 @@ export default function StagingTable() {
                 </button>
             </div>
 
-            <BaseTable 
-                data={data} 
-                accentColor="#d4a017" 
+            <BaseTable
+                data={data}
+                accentColor="#d4a017"
                 isAdding={isAdding}
                 newRow={newRow}
                 onNewRowChange={handleFieldChange}
-                onSave={handleSave} 
-                onCancel={handleCancel}
+                onDelete={handleDelete}
+                editingId={editingId}
+                editRow={editRow}
+                onEditStart={handleEditStart}
+                onEditChange={handleEditChange}
+                onUpdateSave={handleUpdateSave}
+                onUpdateCancel={handleUpdateCancel}
             />
         </div>
     );
 }
 
-// Fixed constant names to match JSX usage
+
 const iconBtnStyle: React.CSSProperties = {
     padding: '8px',
     backgroundColor: '#f8f9fa',

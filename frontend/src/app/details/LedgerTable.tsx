@@ -9,9 +9,15 @@ export default function StagingTable() {
 
     const refresh = async () => {
         setLoading(true);
-        const res = await fetch('/api/revenue');
-        setData(await res.json());
-        setLoading(false);
+        try {
+            const res = await fetch('/api/revenue');
+            const json = await res.json();
+            setData(json);
+        } catch (err) {
+            console.error("Refresh failed", err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => { refresh(); }, []);
@@ -20,24 +26,23 @@ export default function StagingTable() {
         <div style={{ marginBottom: '40px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                 <h2 style={{ color: "#2d5a27", margin: 0 }}>LEDGER [FINALIZED]</h2>
-                
-                <button 
-                    onClick={refresh} 
+
+                <button
+                    onClick={refresh}
                     disabled={loading}
                     style={iconBtnStyle}
                     title="Refresh Staging Data"
                 >
-                    <RotateCw 
-                        size={20} 
-                        className={loading ? "animate-spin" : ""}
-                        style={{ 
+                    <RotateCw
+                        size={18}
+                        style={{
                             transition: 'transform 0.5s',
-                            transform: loading ? 'rotate(360deg)' : 'rotate(0deg)' 
-                        }} 
+                            transform: loading ? 'rotate(360deg)' : 'rotate(0deg)'
+                        }}
                     />
                 </button>
             </div>
-            
+
             <BaseTable data={data} accentColor="#2d5a27" />
         </div>
     );
@@ -45,12 +50,11 @@ export default function StagingTable() {
 
 const iconBtnStyle: React.CSSProperties = {
     padding: '8px',
-    backgroundColor: '#f0f0f0',
-    border: '1px solid #ccc',
+    backgroundColor: '#f8f9fa',
+    border: '1px solid #ddd',
     borderRadius: '6px',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'background-color 0.2s'
 };

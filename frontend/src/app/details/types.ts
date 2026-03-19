@@ -48,6 +48,11 @@ export interface BaseTableProps {
     isAdding?: boolean;
     newRow?: Partial<RevenueRecord>;
     onNewRowChange?: (field: keyof RevenueRecord, value: string | number | null) => void;
-    onSave?: () => void;
-    onCancel?: () => void;
+    onDelete?: (id: number) => void;
+    editingId?: number | null;
+    editRow?: Partial<RevenueRecord> | null;
+    onEditStart?: (row: RevenueRecord) => void;
+    onEditChange?: (field: keyof RevenueRecord, value: string | number | null) => void;
+    onUpdateSave?: () => void;
+    onUpdateCancel?: () => void;
 }
