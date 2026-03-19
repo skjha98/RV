@@ -55,4 +55,13 @@ export interface BaseTableProps {
     onEditChange?: (field: keyof RevenueRecord, value: string | number | null) => void;
     onUpdateSave?: () => void;
     onUpdateCancel?: () => void;
+    onOpenPicker?: (field: 'flat_id' | 'vendor_id' | 'event_id') => void;
+
+}
+
+export interface LookupItem { id: number; name: string; info?: string; }
+export interface LookupModalProps {
+    type: 'flat_id' | 'vendor_id' | 'event_id';
+    onSelect: (id: number) => void;
+    onClose: () => void;
 }

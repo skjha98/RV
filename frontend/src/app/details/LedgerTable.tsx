@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { RotateCw } from "lucide-react"; // Import the icon
 import BaseTable from "./BaseTable";
+import { iconBtnStyle } from "./tableStyles";
 
 export default function StagingTable() {
     const [data, setData] = useState([]);
@@ -47,14 +48,3 @@ export default function StagingTable() {
         </div>
     );
 }
-
-const iconBtnStyle: React.CSSProperties = {
-    padding: '8px',
-    backgroundColor: '#f8f9fa',
-    border: '1px solid #ddd',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-};

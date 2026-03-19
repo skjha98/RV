@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { RotateCw, Plus } from "lucide-react";
 import BaseTable from "./BaseTable";
 import { RevenueRecord } from "./types";
+import { addBtnStyle, iconBtnStyle } from "./tableStyles";
+import LookupModal from "./LookupModal";
 
 const INITIAL_ROW: Partial<RevenueRecord> = {
     bill_no: '',
@@ -26,6 +28,8 @@ export default function StagingTable() {
     const [newRow, setNewRow] = useState<Partial<RevenueRecord>>(INITIAL_ROW);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editRow, setEditRow] = useState<Partial<RevenueRecord> | null>(null);
+    const [isPickerOpen, setIsPickerOpen] = useState(false);
+    const [activePickerField, setActivePickerField] = useState<'flat_id' | 'vendor_id' | 'event_id' | null>(null);
 
     const refresh = async () => {
         setLoading(true);
@@ -38,6 +42,22 @@ export default function StagingTable() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleOpenPicker = (field: 'flat_id' | 'vendor_id' | 'event_id') => {
+        setActivePickerField(field);
+        setIsPickerOpen(true);
+    };
+
+    const handleSelectFromPicker = (id: number) => {
+        if (!activePickerField) return;
+
+        // Determine if we are updating the "New" row or an "Editing" row
+        if ((editingId && editRow) || (isAdding)) {
+            handleEditChange(activePickerField, id);
+        }        
+        setIsPickerOpen(false);
+        setActivePickerField(null);
     };
 
     const handleSave = async () => {
@@ -179,33 +199,15 @@ export default function StagingTable() {
                 onEditChange={handleEditChange}
                 onUpdateSave={handleUpdateSave}
                 onUpdateCancel={handleUpdateCancel}
+                onOpenPicker={handleOpenPicker}
             />
+            {isPickerOpen && activePickerField && (
+                <LookupModal
+                    type={activePickerField}
+                    onSelect={handleSelectFromPicker}
+                    onClose={() => setIsPickerOpen(false)}
+                />
+            )}
         </div>
     );
 }
-
-
-const iconBtnStyle: React.CSSProperties = {
-    padding: '8px',
-    backgroundColor: '#f8f9fa',
-    border: '1px solid #ddd',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-};
-
-const addBtnStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '5px',
-    padding: '8px 16px',
-    backgroundColor: '#d4a017',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-    fontSize: '0.85rem'
-};

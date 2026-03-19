@@ -1,6 +1,7 @@
 import React from 'react';
 import { BaseTableProps, RevenueRecord } from './types';
 import { Trash2, Pencil, Check, X } from 'lucide-react';
+import { cancelBtnStyle, deleteBtnDisableStyle, deleteBtnStyle, editBtnStyle, inputStyle, saveBtnStyle, tdStyle, thStyle } from './tableStyles';
 
 
 
@@ -16,7 +17,8 @@ export default function BaseTable({
     onEditStart,
     onEditChange,
     onUpdateSave,
-    onUpdateCancel
+    onUpdateCancel,
+    onOpenPicker,
 }: BaseTableProps) {
 
     const receivedTotal = data.reduce((acc, item) => acc + Number(item.amount_received || 0), 0);
@@ -49,9 +51,57 @@ export default function BaseTable({
                 </select>
             </td>
             <td style={tdStyle}><input style={inputStyle} placeholder="Tracking" value={rowObj?.tracking_id || ''} onChange={e => handleChange?.('tracking_id', e.target.value || null)} /></td>
-            <td style={tdStyle}><input type="number" style={inputStyle} placeholder="Flat" value={rowObj?.flat_id ?? ''} onChange={e => handleChange?.('flat_id', e.target.value ? Number(e.target.value) : null)} /></td>
-            <td style={tdStyle}><input type="number" style={inputStyle} placeholder="Vendor" value={rowObj?.vendor_id ?? ''} onChange={e => handleChange?.('vendor_id', e.target.value ? Number(e.target.value) : null)} /></td>
-            <td style={tdStyle}><input type="number" style={inputStyle} placeholder="Event" value={rowObj?.event_id ?? ''} onChange={e => handleChange?.('event_id', e.target.value ? Number(e.target.value) : null)} /></td>
+            <td style={tdStyle}>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                    <input
+                        type="number"
+                        style={{ ...inputStyle, flex: 1 }}
+                        value={rowObj?.flat_id ?? ''}
+                        onChange={(e) => handleChange('flat_id', e.target.value ? Number(e.target.value) : null)}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => onOpenPicker?.('flat_id')}
+                        style={{ padding: '0 4px', cursor: 'pointer', borderRadius: '4px', border: '1px solid #ccc' }}
+                    >
+                        🔍
+                    </button>
+                </div>
+            </td>
+            <td style={tdStyle}>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                    <input
+                        type="number"
+                        style={{ ...inputStyle, flex: 1 }}
+                        value={rowObj?.flat_id ?? ''}
+                        onChange={(e) => handleChange('vendor_id', e.target.value ? Number(e.target.value) : null)}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => onOpenPicker?.('vendor_id')}
+                        style={{ padding: '0 4px', cursor: 'pointer', borderRadius: '4px', border: '1px solid #ccc' }}
+                    >
+                        🔍
+                    </button>
+                </div>
+            </td>
+            <td style={tdStyle}>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                    <input
+                        type="number"
+                        style={{ ...inputStyle, flex: 1 }}
+                        value={rowObj?.flat_id ?? ''}
+                        onChange={(e) => handleChange('event_id', e.target.value ? Number(e.target.value) : null)}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => onOpenPicker?.('event_id')}
+                        style={{ padding: '0 4px', cursor: 'pointer', borderRadius: '4px', border: '1px solid #ccc' }}
+                    >
+                        🔍
+                    </button>
+                </div>
+            </td>
         </>
     );
 
@@ -151,13 +201,3 @@ export default function BaseTable({
         </div>
     );
 }
-
-// --- Styles ---
-const thStyle: React.CSSProperties = { padding: '12px 15px', textAlign: 'left', borderBottom: '2px solid #ddd', fontSize: '0.85rem', color: '#666' };
-const tdStyle: React.CSSProperties = { padding: '12px 15px', borderBottom: '1px solid #eee', fontSize: '0.9rem' };
-const inputStyle: React.CSSProperties = { width: '100%', padding: '4px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '0.85rem', boxSizing: 'border-box' };
-const saveBtnStyle = { backgroundColor: '#2d5a27', color: 'white', border: 'none', padding: '5px', borderRadius: '4px', cursor: 'pointer', display: 'flex' };
-const cancelBtnStyle = { backgroundColor: '#666', color: 'white', border: 'none', padding: '5px', borderRadius: '4px', cursor: 'pointer', display: 'flex' };
-const editBtnStyle: React.CSSProperties = { backgroundColor: 'transparent', color: '#1a73e8', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex' };
-const deleteBtnStyle: React.CSSProperties = { backgroundColor: 'transparent', color: '#ff4d4d', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex' };
-const deleteBtnDisableStyle: React.CSSProperties = { ...deleteBtnStyle, color: '#ccc', cursor: 'not-allowed' };
